@@ -37,6 +37,22 @@ class Player:
         self.username = username
         Player.all.append(self)
 
+    @classmethod
+    def highest_scored(cls, game):
+        if not isinstance(game, Game):
+            raise Exception
+        if len([result for result in Result.all if result.game == game]) == 0:
+            return None
+        game_players = [player for player in cls.all if player.played_game(game)]
+        high_score = 0
+        high_player = None
+        for player in game_players:
+            average = game.average_score(player)
+            if  average > high_score:
+                high_player = player
+                high_score = game.average_score(player)
+        return high_player
+
     @property
     def username(self):
         return self._username
@@ -68,6 +84,7 @@ class Player:
             if result.game == game and result.player == self:
                 count += 1
         return count
+    
 
 class Result:
 
